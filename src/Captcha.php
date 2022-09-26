@@ -527,7 +527,6 @@ class Captcha
         $check_result = $this->hasher->check($value, $key);
         if (!$check_result) {
             Cache::forget($this->get_cache_key($key));
-            throw new AuthenticationException('验证码错误');
         }
         return $check_result;
     }
