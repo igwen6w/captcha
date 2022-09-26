@@ -27,6 +27,7 @@ use Illuminate\Session\Store as Session;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Auth\AuthenticationException;
 
 /**
  * Class Captcha
@@ -523,7 +524,12 @@ class Captcha
 
         if(!$this->sensitive) $value = $this->str->lower($value);
         if($this->encrypt) $key = Crypt::decrypt($key);
-        return $this->hasher->check($value, $key);
+        $check_result = $this->hasher->check($value, $key);
+        if (!$check_result) {
+            Cache::forget($this->get_cache_key($key));
+            throw new AuthenticationException('验证码错误');
+        }
+        return $check_result;
     }
 
     /**
