@@ -524,11 +524,7 @@ class Captcha
 
         if(!$this->sensitive) $value = $this->str->lower($value);
         if($this->encrypt) $key = Crypt::decrypt($key);
-        $check_result = $this->hasher->check($value, $key);
-        if (!$check_result) {
-            Cache::forget($this->get_cache_key($key));
-        }
-        return $check_result;
+        return $this->hasher->check($value, $key);
     }
 
     /**
